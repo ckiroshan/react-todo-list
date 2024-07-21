@@ -11,13 +11,11 @@ function App() {
       <div className="app-container">
         <div className="navbar">
           <div className="logo">
-            <Link to="/">
-              Todo Tracker
-            </Link>
+            <Link to="/">Todo Tracker</Link>
           </div>
           <div className="navbar-center">
             <SignedIn>
-              <Link to="/dashboard">Balance Insight</Link>
+              <Link to="/dashboard">Tasks Insight</Link>
             </SignedIn>
           </div>
           <div className="navbar-right">
