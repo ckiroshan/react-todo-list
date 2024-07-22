@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 
 const Dashboard = () => {
+  const [todos, setTodos] = useState(() => {
+    // Load todos from local storage or return an empty array
+    const storedTodos = localStorage.getItem("todos");
+    return storedTodos ? JSON.parse(storedTodos) : [];
+  });
   const [input, setInput] = useState("");
   const [filter, setFilter] = useState("all");
   const [falling, setFalling] = useState([]); // New state for falling animation
