@@ -24,6 +24,18 @@ const Dashboard = () => {
     }
   };
 
+  const deleteCheck = (index) => {
+    // Mark the todo as falling before removing it
+    setFalling((prev) => [...prev, index]);
+
+    // Remove the todo after a short delay to allow animation
+    setTimeout(() => {
+      const newTodos = todos.filter((_, i) => i !== index);
+      setTodos(newTodos);
+      setFalling((prev) => prev.filter((i) => i !== index)); // Clean up falling state
+    }, 300); // CSS transition duration
+  };
+
   return (
     <div>
       <h1>Dashboard</h1>
