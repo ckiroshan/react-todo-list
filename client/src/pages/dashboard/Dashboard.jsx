@@ -15,6 +15,15 @@ const Dashboard = () => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
+  const addTodo = (event) => {
+    event.preventDefault();
+    if (input.trim()) {
+      const newTodos = [...todos, { text: input, completed: false }];
+      setTodos(newTodos);
+      setInput("");
+    }
+  };
+
   return (
     <div>
       <h1>Dashboard</h1>
