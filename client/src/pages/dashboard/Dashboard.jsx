@@ -36,6 +36,13 @@ const Dashboard = () => {
     }, 300); // CSS transition duration
   };
 
+  // Toggle the completion status of a todo item
+  const toggleComplete = (index) => {
+    const newTodos = [...todos]; // Create a copy of current todos array
+    newTodos[index].completed = !newTodos[index].completed; // Toggle the completed status
+    setTodos(newTodos); // Update the state with the modified todos
+  };
+
   return (
     <div>
       <h1>Dashboard</h1>
