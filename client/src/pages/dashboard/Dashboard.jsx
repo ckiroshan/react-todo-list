@@ -43,6 +43,13 @@ const Dashboard = () => {
     setTodos(newTodos); // Update the state with the modified todos
   };
 
+  // Filter the todos based on selected filter criteria
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === "completed") return todo.completed; // Include only completed todos
+    if (filter === "uncompleted") return !todo.completed; // Include only uncompleted todos
+    return true; // Include all todos if no filter is applied
+  });
+
   return (
     <div>
       <h1>Dashboard</h1>
