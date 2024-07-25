@@ -70,6 +70,26 @@ const Dashboard = () => {
           </select>
         </div>
       </form>
+
+      {/* List of To-Do Items */}
+      <div className="todo-container">
+        <ul className="todo-list">
+          {filteredTodos.map((todo, index) => (
+            <div
+              className={`todo ${falling.includes(index) ? "fall" : ""}`} // Apply fall class
+              key={index}
+            >
+              <li className={`todo-item ${todo.completed ? "completed" : ""}`}>{todo.text}</li>
+              <button className="complete-btn" onClick={() => toggleComplete(index)}>
+                <FontAwesomeIcon icon={faCheck} />
+              </button>
+              <button className="delete-btn" onClick={() => deleteCheck(index)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            </div>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
