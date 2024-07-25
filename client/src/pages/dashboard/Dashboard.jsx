@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusSquare, faCheck, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const Dashboard = () => {
   const [todos, setTodos] = useState(() => {
@@ -51,10 +53,25 @@ const Dashboard = () => {
   });
 
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="dashboard-container">
+      <h1 className="todo-header">Add Tasks to get started...</h1>
+
+      {/* Add new list Item */}
+      <form onSubmit={addTodo}>
+        <input type="text" className="todo-input" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Add a new task" />
+        <button className="todo-button" type="submit">
+          <FontAwesomeIcon style={{ fontSize: "2rem" }} icon={faPlusSquare} />
+        </button>
+        <div className="select">
+          <select name="todos" className="filter-todo" value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <option value="all">All</option>
+            <option value="completed">Completed</option>
+            <option value="uncompleted">Uncompleted</option>
+          </select>
+        </div>
+      </form>
     </div>
   );
-}
+};
 
-export default Dashboard
+export default Dashboard;
