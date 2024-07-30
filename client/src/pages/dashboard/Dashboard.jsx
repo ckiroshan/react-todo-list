@@ -1,63 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare, faCheck, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useTodos } from "../../contexts/TodoContext";
+import { useUser } from "@clerk/clerk-react";
 
 const Dashboard = () => {
-  const [todos, setTodos] = useState(() => {
-    // Load todos from local storage or return an empty array
-    const storedTodos = localStorage.getItem("todos");
-    return storedTodos ? JSON.parse(storedTodos) : [];
-  });
+  const { todos, addTodo, updateTodo, deleteTodo } = useTodos();
+  const { user } = useUser(); // Get user details from Clerk
   const [input, setInput] = useState("");
   const [filter, setFilter] = useState("all");
-  const [falling, setFalling] = useState([]); // New state for falling animation
+  const [todoToDelete, setTodoToDelete] = useState(null); // Track which todo is being deleted
 
-  // Save todos to local storage whenever they change
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
-
-  const addTodo = (event) => {
+  const handleAddTodo = (event) => {
     event.preventDefault();
     if (input.trim()) {
-      const newTodos = [...todos, { text: input, completed: false }];
-      setTodos(newTodos);
+      addTodo({
+        text: input,
+        completed: false,
+        userId: user.id,
+        name: user.fullName,
+      });
       setInput("");
     }
   };
 
-  const deleteCheck = (index) => {
-    // Mark the todo as falling before removing it
-    setFalling((prev) => [...prev, index]);
+  const toggleComplete = (id) => {
+    const todoToUpdate = todos.find((todo) => todo.id === id);
+    updateTodo(id, { ...todoToUpdate, completed: !todoToUpdate.completed });
+  };
 
-    // Remove the todo after a short delay to allow animation
+  const handleDeleteTodo = (id) => {
+    setTodoToDelete(id); // Set the todo to delete, triggering the animation
     setTimeout(() => {
-      const newTodos = todos.filter((_, i) => i !== index);
-      setTodos(newTodos);
-      setFalling((prev) => prev.filter((i) => i !== index)); // Clean up falling state
-    }, 300); // CSS transition duration
+      deleteTodo(id); // After animation ends, delete the todo from the list
+    }, 500); // Match this delay with the animation duration
   };
 
-  // Toggle the completion status of a todo item
-  const toggleComplete = (index) => {
-    const newTodos = [...todos]; // Create a copy of current todos array
-    newTodos[index].completed = !newTodos[index].completed; // Toggle the completed status
-    setTodos(newTodos); // Update the state with the modified todos
-  };
-
-  // Filter the todos based on selected filter criteria
   const filteredTodos = todos.filter((todo) => {
-    if (filter === "completed") return todo.completed; // Include only completed todos
-    if (filter === "uncompleted") return !todo.completed; // Include only uncompleted todos
-    return true; // Include all todos if no filter is applied
+    if (filter === "completed") return todo.completed;
+    if (filter === "uncompleted") return !todo.completed;
+    return true;
   });
 
   return (
     <div className="dashboard-container">
       <h1 className="todo-header">Add Tasks to get started...</h1>
 
-      {/* Add new list Item */}
-      <form onSubmit={addTodo}>
+      <form onSubmit={handleAddTodo}>
         <input type="text" className="todo-input" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Add a new task" />
         <button className="todo-button" type="submit">
           <FontAwesomeIcon style={{ fontSize: "2rem" }} icon={faPlusSquare} />
@@ -71,19 +60,15 @@ const Dashboard = () => {
         </div>
       </form>
 
-      {/* List of To-Do Items */}
       <div className="todo-container">
         <ul className="todo-list">
-          {filteredTodos.map((todo, index) => (
-            <div
-              className={`todo ${falling.includes(index) ? "fall" : ""}`} // Apply fall class
-              key={index}
-            >
-              <li className={`todo-item ${todo.completed ? "completed" : ""}`}>{todo.text}</li>
-              <button className="complete-btn" onClick={() => toggleComplete(index)}>
+          {filteredTodos.map((todo) => (
+            <div className={`todo ${todo.completed ? "completed" : ""} ${todoToDelete === todo.id ? "fall" : ""}`} key={todo.id}>
+              <li className="todo-item">{todo.text}</li>
+              <button className="complete-btn" onClick={() => toggleComplete(todo.id)}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
-              <button className="delete-btn" onClick={() => deleteCheck(index)}>
+              <button className="delete-btn" onClick={() => handleDeleteTodo(todo.id)}>
                 <FontAwesomeIcon icon={faTrash} />
               </button>
             </div>
