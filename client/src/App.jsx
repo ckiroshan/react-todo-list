@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { SignedIn, UserButton, useUser } from "@clerk/clerk-react";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Auth from "./pages/auth/Auth";
+import { TodoProvider } from "./contexts/TodoContext";
 
 function App() {
   const { user } = useUser();
@@ -27,10 +28,12 @@ function App() {
             </SignedIn>
           </div>
         </div>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/" element={<Auth />} />
-        </Routes>
+        <TodoProvider>
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/" element={<Auth />} />
+          </Routes>
+        </TodoProvider>
       </div>
     </Router>
   );
